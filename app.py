@@ -25,15 +25,15 @@ st.title("🐬🐋 Dolphin vs Whale Detection App")
 st.markdown("""
 Aplikasi ini memungkinkan kamu untuk:
 - **Mendeteksi objek** pada gambar menggunakan model YOLO.
-- **Mengklasifikasikan** apakah gambar tersebut merupakan **Dolphin (Lumba-lumba)** atau **Whale (Paus)** menggunakan model klasifikasi berbasis TensorFlow.
+- **Mengklasifikasikan** menggunakan model klasifikasi berbasis TensorFlow.
 """)
 
 menu = st.sidebar.selectbox(
     "Pilih Mode:",
-    ["Deteksi Objek (YOLO)", "Klasifikasi Dolphin vs Whale"]
+    ["Deteksi Objek (YOLO)", "Klasifikasi"]
 )
 
-uploaded_file = st.file_uploader("Unggah Gambar Laut", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Unggah Gambar ", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     img = Image.open(uploaded_file)
@@ -46,28 +46,40 @@ if uploaded_file is not None:
         result_img = results[0].plot()  # hasil deteksi (gambar dengan bounding box)
         st.image(result_img, caption="📸 Hasil Deteksi Objek", use_container_width=True)
 
-    elif menu == "Klasifikasi Dolphin vs Whale":
-        # Preprocessing gambar
-        img_resized = img.resize((224, 224))  # sesuaikan ukuran dengan model kamu
+    elif menu == "Klasifikasi Penyakit Mata":
+        # ==========================
+        # Preprocessing
+        # ==========================
+        img_resized = img.resize((224, 224))  # sesuaikan dengan input model
         img_array = image.img_to_array(img_resized)
         img_array = np.expand_dims(img_array, axis=0).astype("float32") / 255.0
 
+        # ==========================
         # Prediksi
-        st.write("🤖 **Mengklasifikasikan gambar...**")
+        # ==========================
+        st.write("🧠 **Menganalisis gambar untuk mendeteksi penyakit mata...**")
         prediction = classifier.predict(img_array)
         class_index = np.argmax(prediction)
         probability = np.max(prediction)
 
-        # Label kelas
-        classes = ["Dolphin 🐬", "Whale 🐋"]
+        # ==========================
+        # Label Kelas
+        # ==========================
+        classes = ["Cataract", "Diabetic Retinopathy", "Glaucoma", "Normal"]
         predicted_label = classes[class_index]
 
-        # Tampilkan hasil
-        st.subheader("📊 Hasil Klasifikasi")
-        st.markdown(f"**Prediksi:** {predicted_label}")
+        # ==========================
+        # Tampilkan Hasil
+        # ==========================
+        st.subheader("📊 Hasil Klasifikasi Penyakit Mata")
+        st.markdown(f"**Prediksi:** `{predicted_label}`")
         st.markdown(f"**Probabilitas:** `{probability:.2f}`")
-        
-        if class_index == 0:
-            st.success("Gambar ini terdeteksi sebagai **Dolphin** 🐬 — hewan laut cerdas dengan perilaku sosial tinggi.")
+
+        if predicted_label == "Cataract":
+            st.warning("⚠️ **Cataract** terdeteksi — terdapat kekeruhan pada lensa mata yang dapat menyebabkan penglihatan kabur.")
+        elif predicted_label == "Diabetic Retinopathy":
+            st.error("🚨 **Diabetic Retinopathy** terdeteksi — komplikasi akibat diabetes yang dapat merusak retina.")
+        elif predicted_label == "Glaucoma":
+            st.warning("⚠️ **Glaucoma** terdeteksi — peningkatan tekanan intraokular yang dapat merusak saraf optik.")
         else:
-            st.info("Gambar ini terdeteksi sebagai **Whale** 🐋 — mamalia laut besar dengan ekolokasi yang kuat.")
+            st.success("✅ **Normal** — tidak terdeteksi tanda-tanda penyakit mata yang signifikan.")
