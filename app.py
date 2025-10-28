@@ -49,12 +49,19 @@ if uploaded_file is not None:
     elif menu == "Klasifikasi Gambar":
         st.write("🧠 Mengklasifikasikan gambar...")
 
-        # Preprocessing
-        img_resized = img.resize((224, 224))
+        # ==========================
+        # Preprocessing Aman
+        # ==========================
+        target_size = classifier.input_shape[1:3]  # otomatis ambil ukuran model
+        if classifier.input_shape[-1] == 1:
+            img = img.convert("L")  # grayscale
+        else:
+            img = img.convert("RGB")
+
+        img_resized = img.resize(target_size)
         img_array = image.img_to_array(img_resized)
         img_array = np.expand_dims(img_array, axis=0)
         img_array = img_array / 255.0
-
         # Prediksi
         prediction = classifier.predict(img_array)
         class_index = np.argmax(prediction)
