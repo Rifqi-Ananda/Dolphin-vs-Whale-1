@@ -20,83 +20,31 @@ yolo_model, classifier = load_models()
 # ==========================
 # UI
 # ==========================
-st.set_page_config(page_title="🐬🐋 Dolphin vs Whale App", page_icon="🌊", layout="centered")
+st.title("🧠 Image Classification & Object Detection App")
 
-# =============================
-# HEADER
-# =============================
-st.title("🐬🐋 Dolphin vs Whale Detection App")
+menu = st.sidebar.selectbox("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
 
-st.markdown("""
-Selamat datang di aplikasi deteksi **Dolphin** dan **Whale**!  
-Aplikasi ini menggunakan **model deep learning** untuk:
-- 🐬 **Mendeteksi lumba-lumba**
-- 🐋 **Mendeteksi paus**
-- 🤖 Dan menampilkan hasil klasifikasi dengan probabilitasnya
-""")
-
-st.divider()
-
-# =============================
-# ANIMASI PEMBUKA
-# =============================
-st.subheader("🌊 Animasi Lautan")
-
-st.markdown(
-    """
-    <div style="text-align:center;">
-        <img src="https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif" width="400">
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-st.caption("✨ Lumba-lumba dan paus bermain di lautan — siap untuk dideteksi oleh AI!")
-
-st.divider()
-
-# =============================
-# UNGGAH GAMBAR
-# =============================
-uploaded_file = st.file_uploader("📸 Unggah gambar lumba-lumba atau paus", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Unggah Gambar", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    img = Image.open(uploaded_file).convert("RGB")
-    st.image(img, caption="🌊 Gambar yang diunggah", use_container_width=True)
+    img = Image.open(uploaded_file)
+    st.image(img, caption="Gambar yang Diupload", use_container_width=True)
 
-    st.write("🔍 **Model sedang menganalisis gambar...**")
-    with st.spinner("Sedang mendeteksi spesies laut... 🌊"):
-        # Simulasi waktu prediksi
-        gif = Image.open("assets/underwater.gif") if False else None
-        time.sleep(2)
+    if menu == "Deteksi Objek (YOLO)":
+        # Deteksi objek
+        results = yolo_model(img)
+        result_img = results[0].plot()  # hasil deteksi (gambar dengan box)
+        st.image(result_img, caption="Hasil Deteksi", use_container_width=True)
 
-    # 🔹 Contoh hasil prediksi (dummy)
-    import random
-    classes = ["Dolphin 🐬", "Whale 🐋"]
-    predicted_label = random.choice(classes)
-    probability = round(random.uniform(0.85, 0.99), 2)
+    elif menu == "Klasifikasi Gambar":
+        # Preprocessing
+        img_resized = img.resize((224, 224))  # sesuaikan ukuran dengan model kamu
+        img_array = image.img_to_array(img_resized)
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array = img_array / 255.0
 
-    st.subheader("📊 Hasil Klasifikasi")
-    st.write(f"**Prediksi:** {predicted_label}")
-    st.write(f"**Probabilitas:** `{probability}`")
-
-    if "Dolphin" in predicted_label:
-        st.success("🐬 Gambar ini terdeteksi sebagai **Lumba-lumba** — mamalia laut cerdas yang suka berinteraksi.")
-        st.image("https://media.giphy.com/media/3oKIPtjElfqwMOTbH2/giphy.gif", caption="Lumba-lumba berenang 🐬", use_container_width=True)
-    else:
-        st.info("🐋 Gambar ini terdeteksi sebagai **Paus** — raksasa laut yang megah dan damai.")
-        st.image("https://media.giphy.com/media/l0Exk8EUzSLsrErEQ/giphy.gif", caption="Paus muncul ke permukaan 🐋", use_container_width=True)
-
-else:
-    st.info("📤 Silakan unggah gambar untuk mulai klasifikasi!")
-
-st.divider()
-
-st.markdown(
-    """
-    <div style="text-align:center; color:gray; font-size:0.9em;">
-        Dibuat dengan ❤️ oleh tim AI Laut — powered by Streamlit & Deep Learning
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+        # Prediksi
+        prediction = classifier.predict(img_array)
+        class_index = np.argmax(prediction)
+        st.write("### Hasil Prediksi:", class_index)
+        st.write("Probabilitas:", np.max(prediction))
