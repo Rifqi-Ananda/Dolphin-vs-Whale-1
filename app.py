@@ -20,7 +20,7 @@ yolo_model, classifier = load_models()
 # ==========================
 # UI
 # ==========================
-st.title("🐬🐋 Dolphin vs Whale Classification & Detection App")
+st.title("🐬🐋 Dolphin vs Whale Detection App")
 
 st.markdown("""
 Aplikasi ini memungkinkan kamu untuk:
