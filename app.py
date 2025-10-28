@@ -107,6 +107,3 @@ page_bg = """
 """
 st.markdown(page_bg, unsafe_allow_html=True)
 
-"""
-st.markdown(page_bg, unsafe_allow_html=True)
-
