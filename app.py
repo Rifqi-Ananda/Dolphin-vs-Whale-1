@@ -17,15 +17,21 @@ def load_models():
 yolo_model, classifier = load_models()
 
 # ==========================
-# CUSTOM PAGE STYLE
+# CUSTOM STYLE (THEME)
 # ==========================
 st.markdown("""
 <style>
+/* Background gradient */
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+    background: radial-gradient(circle at top left, #a8edea, #fed6e3);
 }
-[data-testid="stHeader"] {background: rgba(0,0,0,0);}
-[data-testid="stSidebar"] {background: #f0f2f6;}
+
+/* Hapus background header */
+[data-testid="stHeader"] {
+    background: rgba(0,0,0,0);
+}
+
+/* Glow effect untuk judul */
 h1 {
     text-align: center;
     font-size: 60px;
@@ -33,18 +39,49 @@ h1 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 800;
+    text-shadow: 0 0 15px rgba(0, 114, 255, 0.5);
+}
+
+/* Gaya teks deskripsi */
+p {
+    text-align: center;
+    font-size: 20px;
+    color: #222;
+}
+
+/* === TAB GLOW STYLE === */
+div[data-baseweb="tab"] {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: white !important;
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin: 5px;
+    box-shadow: 0px 0px 20px rgba(0, 150, 255, 0.6);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover dan aktif glowing */
+div[data-baseweb="tab"]:hover {
+    box-shadow: 0px 0px 25px rgba(0, 255, 255, 0.9);
+    transform: scale(1.05);
+}
+
+div[data-baseweb="tab"][aria-selected="true"] {
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    box-shadow: 0px 0px 25px rgba(0, 255, 255, 0.9);
+    color: white !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # ==========================
-# Header
+# HEADER
 # ==========================
 st.markdown("""
 <h1>🐬 AI Vision Lab 🧠</h1>
-<p style="text-align:center; font-size:20px; color:#333;">
-Pilih salah satu fitur di bawah ini untuk mendeteksi objek laut atau mengklasifikasikan penyakit mata.
-</p>
+<p>Pilih fitur di bawah untuk mendeteksi <b>dolphin/whale</b> atau <b>menganalisis penyakit mata</b>.</p>
 """, unsafe_allow_html=True)
 
 # ==========================
@@ -64,10 +101,10 @@ with tab1:
         img = Image.open(uploaded_file)
         st.image(img, caption="🖼️ Gambar yang Diupload", use_container_width=True)
 
-        st.write("🔍 Mendeteksi objek menggunakan model YOLO...")
-        results = yolo_model(img)
-        result_img = results[0].plot()
-        st.image(result_img, caption="📸 Hasil Deteksi Objek", use_container_width=True)
+        with st.spinner("🔍 Mendeteksi objek menggunakan model YOLO..."):
+            results = yolo_model(img)
+            result_img = results[0].plot()
+            st.image(result_img, caption="📸 Hasil Deteksi Objek", use_container_width=True)
 
     else:
         st.info("Silakan unggah gambar lumba-lumba atau paus untuk mendeteksi objek 🐬🐋")
@@ -85,7 +122,7 @@ with tab2:
         st.image(img, caption="👁️ Gambar Retina yang Diupload", use_container_width=True)
         st.write("🧩 Mengklasifikasikan gambar...")
 
-        # --- PREPROCESSING OTOMATIS ---
+        # --- PREPROCESSING ---
         target_size = classifier.input_shape[1:3]
         if classifier.input_shape[-1] == 1:
             img = img.convert("L")
@@ -98,9 +135,10 @@ with tab2:
         img_array = img_array / 255.0
 
         # --- PREDIKSI ---
-        prediction = classifier.predict(img_array)
-        class_index = np.argmax(prediction)
-        probability = np.max(prediction)
+        with st.spinner("🩺 Menganalisis citra retina..."):
+            prediction = classifier.predict(img_array)
+            class_index = np.argmax(prediction)
+            probability = np.max(prediction)
 
         # --- LABEL DAN HASIL ---
         classes = ["Cataract 👁️", "Diabetic Retinopathy 🩸", "Glaucoma 👓", "Normal ✅"]
@@ -118,7 +156,7 @@ with tab2:
 
         st.info(descriptions[predicted_label])
 
-        # --- TAMBAH ANIMASI ---
+        # --- ANIMASI ---
         gif_links = {
             "Cataract 👁️": "https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif",
             "Diabetic Retinopathy 🩸": "https://media.giphy.com/media/26n6WywJyh39n1pBu/giphy.gif",
@@ -130,4 +168,3 @@ with tab2:
 
     else:
         st.info("Silakan unggah citra retina untuk analisis penyakit mata 👁️")
-
