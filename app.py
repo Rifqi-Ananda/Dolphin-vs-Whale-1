@@ -101,12 +101,12 @@ else:
 page_bg = """
 <style>
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(to bottom, #a2d9ff, #ffffff);
-}
-[data-testid="stSidebar"] {
-    background: linear-gradient(to bottom, #1e88e5, #64b5f6);
+    background: linear-gradient(to right, #89f7fe, #66a6ff);
 }
 </style>
+"""
+st.markdown(page_bg, unsafe_allow_html=True)
+
 """
 st.markdown(page_bg, unsafe_allow_html=True)
 
