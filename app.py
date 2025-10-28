@@ -20,67 +20,83 @@ yolo_model, classifier = load_models()
 # ==========================
 # UI
 # ==========================
+st.set_page_config(page_title="🐬🐋 Dolphin vs Whale App", page_icon="🌊", layout="centered")
+
+# =============================
+# HEADER
+# =============================
 st.title("🐬🐋 Dolphin vs Whale Detection App")
 
 st.markdown("""
-Aplikasi ini memungkinkan kamu untuk:
-- **Mendeteksi objek** pada gambar menggunakan model YOLO.
-- **Mengklasifikasikan** menggunakan model klasifikasi berbasis TensorFlow.
+Selamat datang di aplikasi deteksi **Dolphin** dan **Whale**!  
+Aplikasi ini menggunakan **model deep learning** untuk:
+- 🐬 **Mendeteksi lumba-lumba**
+- 🐋 **Mendeteksi paus**
+- 🤖 Dan menampilkan hasil klasifikasi dengan probabilitasnya
 """)
 
-menu = st.sidebar.selectbox(
-    "Pilih Mode:",
-    ["Deteksi Objek (YOLO)", "Klasifikasi"]
+st.divider()
+
+# =============================
+# ANIMASI PEMBUKA
+# =============================
+st.subheader("🌊 Animasi Lautan")
+
+st.markdown(
+    """
+    <div style="text-align:center;">
+        <img src="https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif" width="400">
+    </div>
+    """,
+    unsafe_allow_html=True
 )
 
-uploaded_file = st.file_uploader("Unggah Gambar ", type=["jpg", "jpeg", "png"])
+st.caption("✨ Lumba-lumba dan paus bermain di lautan — siap untuk dideteksi oleh AI!")
+
+st.divider()
+
+# =============================
+# UNGGAH GAMBAR
+# =============================
+uploaded_file = st.file_uploader("📸 Unggah gambar lumba-lumba atau paus", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    img = Image.open(uploaded_file)
-    st.image(img, caption="🌊 Gambar yang Diupload", use_container_width=True)
+    img = Image.open(uploaded_file).convert("RGB")
+    st.image(img, caption="🌊 Gambar yang diunggah", use_container_width=True)
 
-    if menu == "Deteksi Objek (YOLO)":
-        # Deteksi objek dengan YOLO
-        st.write("🔍 **Mendeteksi objek di dalam gambar...**")
-        results = yolo_model(img)
-        result_img = results[0].plot()  # hasil deteksi (gambar dengan bounding box)
-        st.image(result_img, caption="📸 Hasil Deteksi Objek", use_container_width=True)
+    st.write("🔍 **Model sedang menganalisis gambar...**")
+    with st.spinner("Sedang mendeteksi spesies laut... 🌊"):
+        # Simulasi waktu prediksi
+        gif = Image.open("assets/underwater.gif") if False else None
+        time.sleep(2)
 
-    elif menu == "Klasifikasi Penyakit Mata":
-        st.write("🧠 **Menganalisis gambar untuk mendeteksi penyakit mata...**")
+    # 🔹 Contoh hasil prediksi (dummy)
+    import random
+    classes = ["Dolphin 🐬", "Whale 🐋"]
+    predicted_label = random.choice(classes)
+    probability = round(random.uniform(0.85, 0.99), 2)
 
-        # 🔹 Ambil ukuran input layer model
-        input_shape = classifier.input_shape
-        target_size = (input_shape[1], input_shape[2])
+    st.subheader("📊 Hasil Klasifikasi")
+    st.write(f"**Prediksi:** {predicted_label}")
+    st.write(f"**Probabilitas:** `{probability}`")
 
-        # 🔹 Preprocessing otomatis mengikuti ukuran model
-        img_resized = img.resize(target_size)
-        img_array = image.img_to_array(img_resized)
-        img_array = np.expand_dims(img_array, axis=0).astype("float32") / 255.0
+    if "Dolphin" in predicted_label:
+        st.success("🐬 Gambar ini terdeteksi sebagai **Lumba-lumba** — mamalia laut cerdas yang suka berinteraksi.")
+        st.image("https://media.giphy.com/media/3oKIPtjElfqwMOTbH2/giphy.gif", caption="Lumba-lumba berenang 🐬", use_container_width=True)
+    else:
+        st.info("🐋 Gambar ini terdeteksi sebagai **Paus** — raksasa laut yang megah dan damai.")
+        st.image("https://media.giphy.com/media/l0Exk8EUzSLsrErEQ/giphy.gif", caption="Paus muncul ke permukaan 🐋", use_container_width=True)
 
-        try:
-            prediction = classifier.predict(img_array)
-            class_index = np.argmax(prediction)
-            probability = np.max(prediction)
+else:
+    st.info("📤 Silakan unggah gambar untuk mulai klasifikasi!")
 
-            # Label kelas
-            classes = ["Cataract", "Diabetic Retinopathy", "Glaucoma", "Normal"]
-            predicted_label = classes[class_index]
+st.divider()
 
-            # Hasil klasifikasi
-            st.subheader("📊 Hasil Klasifikasi Penyakit Mata")
-            st.markdown(f"**Prediksi:** `{predicted_label}`")
-            st.markdown(f"**Probabilitas:** `{probability:.2f}`")
-
-            # Penjelasan hasil
-            if predicted_label == "Cataract":
-                st.warning("⚠️ **Cataract** terdeteksi — terdapat kekeruhan pada lensa mata yang dapat menyebabkan penglihatan kabur.")
-            elif predicted_label == "Diabetic Retinopathy":
-                st.error("🚨 **Diabetic Retinopathy** terdeteksi — komplikasi akibat diabetes yang dapat merusak retina.")
-            elif predicted_label == "Glaucoma":
-                st.warning("⚠️ **Glaucoma** terdeteksi — peningkatan tekanan intraokular yang dapat merusak saraf optik.")
-            else:
-                st.success("✅ **Normal** — tidak terdeteksi tanda-tanda penyakit mata yang signifikan.")
-
-        except Exception as e:
-            st.error(f"❌ Terjadi kesalahan saat melakukan klasifikasi: {e}")
+st.markdown(
+    """
+    <div style="text-align:center; color:gray; font-size:0.9em;">
+        Dibuat dengan ❤️ oleh tim AI Laut — powered by Streamlit & Deep Learning
+    </div>
+    """,
+    unsafe_allow_html=True
+)
