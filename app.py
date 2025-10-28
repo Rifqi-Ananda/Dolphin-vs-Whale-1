@@ -20,12 +20,25 @@ yolo_model, classifier = load_models()
 # ==========================
 # UI
 # ==========================
-st.title("🧠 Image Classification & Object Detection App")
 st.markdown("""
-Aplikasi ini memiliki dua fitur utama:
-- **Deteksi Objek (YOLO)** untuk mendeteksi objek di dalam gambar.
-- **Klasifikasi Gambar** untuk mengidentifikasi jenis **penyakit mata** berdasarkan citra retina.
-""")
+<h1 style="
+    text-align:center;
+    font-size:60px;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+">
+🐬 Dolphin vs Whale Detection App 🐋
+</h1>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<p style="text-align:center; font-size:20px; color:#555;">
+Selamat datang di aplikasi deteksi & klasifikasi gambar <br>
+Gunakan model YOLO untuk <b>deteksi objek</b> dan TensorFlow untuk <b>klasifikasi</b>.
+</p>
+""", unsafe_allow_html=True)
 
 # Pilih mode
 menu = st.sidebar.selectbox("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
