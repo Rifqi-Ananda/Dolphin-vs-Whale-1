@@ -78,7 +78,7 @@ div[data-baseweb="tab"][aria-selected="true"] {
 st.markdown("""
 <h1>🧠 Objek & Klasifikasi Gambar</h1>
 <p class="subtitle">
-Gunakan AI untuk <b>mendeteksi objek laut</b> seperti <i>Dolphin 🐬</i> dan <i>Whale 🐋</i>, <br>
+<b>mendeteksi objek laut</b> seperti <i>Dolphin 🐬</i> dan <i>Whale 🐋</i>, <br>
 atau <b>menganalisis citra retina</b> untuk mendeteksi <i>penyakit mata</i>. 👁️
 </p>
 """, unsafe_allow_html=True)
