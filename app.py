@@ -10,8 +10,8 @@ from PIL import Image
 # ==========================
 @st.cache_resource
 def load_models():
-    yolo_model = YOLO("model/best.pt")  # Model deteksi objek
-    classifier = tf.keras.models.load_model("model/classifier_model.h5")  # Model klasifikasi
+    yolo_model = YOLO("model/best.pt")
+    classifier = tf.keras.models.load_model("model/classifier_model.h5")
     return yolo_model, classifier
 
 yolo_model, classifier = load_models()
@@ -21,12 +21,17 @@ yolo_model, classifier = load_models()
 # ==========================
 st.markdown("""
 <style>
-/* Background gradient */
+/* 🌈 Background Gradient */
 [data-testid="stAppViewContainer"] {
     background: radial-gradient(circle at top left, #a8edea, #fed6e3);
 }
 
-/* Glow effect untuk judul utama */
+/* ✨ Global text shadow for all elements */
+* {
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+}
+
+/* 🌟 Title Glow Effect */
 h1 {
     text-align: center;
     font-size: 65px;
@@ -38,15 +43,16 @@ h1 {
     margin-bottom: 10px;
 }
 
-/* Deskripsi teks di bawah judul */
+/* 💬 Subtitle */
 .subtitle {
     text-align: center;
     font-size: 20px;
     color: #333;
     margin-bottom: 40px;
+    text-shadow: 1px 1px 5px rgba(255,255,255,0.7);
 }
 
-/* Tab bercahaya */
+/* 🌊 Tab Style */
 div[data-baseweb="tab"] {
     font-size: 20px !important;
     font-weight: 700 !important;
@@ -56,6 +62,7 @@ div[data-baseweb="tab"] {
     padding: 10px 20px;
     margin: 5px;
     box-shadow: 0px 0px 20px rgba(0, 150, 255, 0.6);
+    text-shadow: 0px 0px 6px rgba(0, 255, 255, 0.8);
     transition: all 0.3s ease-in-out;
 }
 
@@ -69,6 +76,28 @@ div[data-baseweb="tab"][aria-selected="true"] {
     box-shadow: 0px 0px 25px rgba(0, 255, 255, 0.9);
     color: white !important;
 }
+
+/* 📦 Card Text Enhancement */
+.stMarkdown p, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5 {
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.25);
+}
+
+/* 🔘 Buttons with Glow */
+.stButton button {
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    color: white;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    text-shadow: 0px 0px 6px rgba(255,255,255,0.8);
+    box-shadow: 0px 0px 15px rgba(0,114,255,0.7);
+    transition: all 0.3s ease;
+}
+
+.stButton button:hover {
+    transform: scale(1.07);
+    box-shadow: 0px 0px 25px rgba(0,255,255,0.9);
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -78,7 +107,7 @@ div[data-baseweb="tab"][aria-selected="true"] {
 st.markdown("""
 <h1>🧠 Objek & Klasifikasi Gambar</h1>
 <p class="subtitle">
-<b>mendeteksi objek laut</b> seperti <i>Dolphin 🐬</i> dan <i>Whale 🐋</i>, <br>
+<b>Mendeteksi objek laut</b> seperti <i>Dolphin 🐬</i> dan <i>Whale 🐋</i>, <br>
 atau <b>menganalisis citra retina</b> untuk mendeteksi <i>penyakit mata</i>. 👁️
 </p>
 """, unsafe_allow_html=True)
