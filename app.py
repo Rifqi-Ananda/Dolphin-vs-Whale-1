@@ -17,7 +17,7 @@ def load_models():
 yolo_model, classifier = load_models()
 
 # ==========================
-# CUSTOM STYLE (THEME)
+# CUSTOM STYLE
 # ==========================
 st.markdown("""
 <style>
@@ -26,30 +26,27 @@ st.markdown("""
     background: radial-gradient(circle at top left, #a8edea, #fed6e3);
 }
 
-/* Hapus background header */
-[data-testid="stHeader"] {
-    background: rgba(0,0,0,0);
-}
-
-/* Glow effect untuk judul */
+/* Glow effect untuk judul utama */
 h1 {
     text-align: center;
-    font-size: 60px;
+    font-size: 65px;
     background: linear-gradient(to right, #00c6ff, #0072ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 800;
-    text-shadow: 0 0 15px rgba(0, 114, 255, 0.5);
+    text-shadow: 0px 0px 25px rgba(0, 114, 255, 0.6);
+    margin-bottom: 10px;
 }
 
-/* Gaya teks deskripsi */
-p {
+/* Deskripsi teks di bawah judul */
+.subtitle {
     text-align: center;
     font-size: 20px;
-    color: #222;
+    color: #333;
+    margin-bottom: 40px;
 }
 
-/* === TAB GLOW STYLE === */
+/* Tab bercahaya */
 div[data-baseweb="tab"] {
     font-size: 20px !important;
     font-weight: 700 !important;
@@ -62,7 +59,6 @@ div[data-baseweb="tab"] {
     transition: all 0.3s ease-in-out;
 }
 
-/* Hover dan aktif glowing */
 div[data-baseweb="tab"]:hover {
     box-shadow: 0px 0px 25px rgba(0, 255, 255, 0.9);
     transform: scale(1.05);
@@ -80,17 +76,20 @@ div[data-baseweb="tab"][aria-selected="true"] {
 # HEADER
 # ==========================
 st.markdown("""
-<h1>🐬 AI Vision Lab 🧠</h1>
-<p>Pilih fitur di bawah untuk mendeteksi <b>dolphin/whale</b> atau <b>menganalisis penyakit mata</b>.</p>
+<h1>🧠 Objek & Klasifikasi Gambar</h1>
+<p class="subtitle">
+Gunakan AI untuk <b>mendeteksi objek laut</b> seperti <i>Dolphin 🐬</i> dan <i>Whale 🐋</i>, <br>
+atau <b>menganalisis citra retina</b> untuk mendeteksi <i>penyakit mata</i>. 👁️
+</p>
 """, unsafe_allow_html=True)
 
 # ==========================
-# NAVIGASI TAB
+# TAB NAVIGATION
 # ==========================
 tab1, tab2 = st.tabs(["🌊 Deteksi Dolphin vs Whale", "🩺 Klasifikasi Penyakit Mata"])
 
 # ===================================================
-# TAB 1: DETEKSI DOLPHIN vs WHALE
+# TAB 1: DETEKSI OBJEK DOLPHIN vs WHALE
 # ===================================================
 with tab1:
     st.subheader("🐋 Deteksi Objek Menggunakan YOLOv8")
