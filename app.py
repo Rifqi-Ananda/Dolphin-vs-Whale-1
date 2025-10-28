@@ -47,39 +47,40 @@ if uploaded_file is not None:
         st.image(result_img, caption="📸 Hasil Deteksi Objek", use_container_width=True)
 
     elif menu == "Klasifikasi Penyakit Mata":
-        # ==========================
-        # Preprocessing
-        # ==========================
-        img_resized = img.resize((224, 224))  # sesuaikan dengan input model
+        st.write("🧠 **Menganalisis gambar untuk mendeteksi penyakit mata...**")
+
+        # 🔹 Ambil ukuran input layer model
+        input_shape = classifier.input_shape
+        target_size = (input_shape[1], input_shape[2])
+
+        # 🔹 Preprocessing otomatis mengikuti ukuran model
+        img_resized = img.resize(target_size)
         img_array = image.img_to_array(img_resized)
         img_array = np.expand_dims(img_array, axis=0).astype("float32") / 255.0
 
-        # ==========================
-        # Prediksi
-        # ==========================
-        st.write("🧠 **Menganalisis gambar untuk mendeteksi penyakit mata...**")
-        prediction = classifier.predict(img_array)
-        class_index = np.argmax(prediction)
-        probability = np.max(prediction)
+        try:
+            prediction = classifier.predict(img_array)
+            class_index = np.argmax(prediction)
+            probability = np.max(prediction)
 
-        # ==========================
-        # Label Kelas
-        # ==========================
-        classes = ["Cataract", "Diabetic Retinopathy", "Glaucoma", "Normal"]
-        predicted_label = classes[class_index]
+            # Label kelas
+            classes = ["Cataract", "Diabetic Retinopathy", "Glaucoma", "Normal"]
+            predicted_label = classes[class_index]
 
-        # ==========================
-        # Tampilkan Hasil
-        # ==========================
-        st.subheader("📊 Hasil Klasifikasi Penyakit Mata")
-        st.markdown(f"**Prediksi:** `{predicted_label}`")
-        st.markdown(f"**Probabilitas:** `{probability:.2f}`")
+            # Hasil klasifikasi
+            st.subheader("📊 Hasil Klasifikasi Penyakit Mata")
+            st.markdown(f"**Prediksi:** `{predicted_label}`")
+            st.markdown(f"**Probabilitas:** `{probability:.2f}`")
 
-        if predicted_label == "Cataract":
-            st.warning("⚠️ **Cataract** terdeteksi — terdapat kekeruhan pada lensa mata yang dapat menyebabkan penglihatan kabur.")
-        elif predicted_label == "Diabetic Retinopathy":
-            st.error("🚨 **Diabetic Retinopathy** terdeteksi — komplikasi akibat diabetes yang dapat merusak retina.")
-        elif predicted_label == "Glaucoma":
-            st.warning("⚠️ **Glaucoma** terdeteksi — peningkatan tekanan intraokular yang dapat merusak saraf optik.")
-        else:
-            st.success("✅ **Normal** — tidak terdeteksi tanda-tanda penyakit mata yang signifikan.")
+            # Penjelasan hasil
+            if predicted_label == "Cataract":
+                st.warning("⚠️ **Cataract** terdeteksi — terdapat kekeruhan pada lensa mata yang dapat menyebabkan penglihatan kabur.")
+            elif predicted_label == "Diabetic Retinopathy":
+                st.error("🚨 **Diabetic Retinopathy** terdeteksi — komplikasi akibat diabetes yang dapat merusak retina.")
+            elif predicted_label == "Glaucoma":
+                st.warning("⚠️ **Glaucoma** terdeteksi — peningkatan tekanan intraokular yang dapat merusak saraf optik.")
+            else:
+                st.success("✅ **Normal** — tidak terdeteksi tanda-tanda penyakit mata yang signifikan.")
+
+        except Exception as e:
+            st.error(f"❌ Terjadi kesalahan saat melakukan klasifikasi: {e}")
