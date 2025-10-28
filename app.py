@@ -21,24 +21,36 @@ yolo_model, classifier = load_models()
 # UI
 # ==========================
 st.title("🧠 Image Classification & Object Detection App")
+st.markdown("""
+Aplikasi ini memiliki dua fitur utama:
+- **Deteksi Objek (YOLO)** untuk mendeteksi objek di dalam gambar.
+- **Klasifikasi Gambar** untuk mengidentifikasi jenis **penyakit mata** berdasarkan citra retina.
+""")
 
+# Pilih mode
 menu = st.sidebar.selectbox("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
 
-uploaded_file = st.file_uploader("Unggah Gambar", type=["jpg", "jpeg", "png"])
+# Upload gambar
+uploaded_file = st.file_uploader("📤 Unggah Gambar", type=["jpg", "jpeg", "png"])
 
+# Jika ada gambar diupload
 if uploaded_file is not None:
     img = Image.open(uploaded_file)
-    st.image(img, caption="Gambar yang Diupload", use_container_width=True)
+    st.image(img, caption="🖼️ Gambar yang Diupload", use_container_width=True)
 
+    # --- MODE YOLO ---
     if menu == "Deteksi Objek (YOLO)":
-        # Deteksi objek
+        st.write("🔍 Mendeteksi objek menggunakan model YOLO...")
         results = yolo_model(img)
-        result_img = results[0].plot()  # hasil deteksi (gambar dengan box)
-        st.image(result_img, caption="Hasil Deteksi", use_container_width=True)
+        result_img = results[0].plot()
+        st.image(result_img, caption="📸 Hasil Deteksi Objek", use_container_width=True)
 
+    # --- MODE KLASIFIKASI GAMBAR ---
     elif menu == "Klasifikasi Gambar":
+        st.write("🧠 Mengklasifikasikan gambar...")
+
         # Preprocessing
-        img_resized = img.resize((224, 224))  # sesuaikan ukuran dengan model kamu
+        img_resized = img.resize((224, 224))
         img_array = image.img_to_array(img_resized)
         img_array = np.expand_dims(img_array, axis=0)
         img_array = img_array / 255.0
@@ -46,5 +58,35 @@ if uploaded_file is not None:
         # Prediksi
         prediction = classifier.predict(img_array)
         class_index = np.argmax(prediction)
-        st.write("### Hasil Prediksi:", class_index)
-        st.write("Probabilitas:", np.max(prediction))
+        probability = np.max(prediction)
+
+        # Label kelas
+        classes = ["Cataract 👁️", "Diabetic Retinopathy 🩸", "Glaucoma 👓", "Normal ✅"]
+        predicted_label = classes[class_index]
+
+        # Hasil klasifikasi
+        st.markdown(f"## 🩺 Hasil Klasifikasi: **{predicted_label}**")
+        st.markdown(f"### 🔢 Probabilitas: `{probability:.2f}`")
+
+        # Tambahkan deskripsi penyakit
+        descriptions = {
+            "Cataract 👁️": "Terjadi ketika lensa mata menjadi keruh, mengganggu penglihatan.",
+            "Diabetic Retinopathy 🩸": "Kerusakan pada retina akibat komplikasi diabetes yang memengaruhi pembuluh darah.",
+            "Glaucoma 👓": "Tekanan tinggi dalam bola mata yang dapat merusak saraf optik.",
+            "Normal ✅": "Tidak terdeteksi adanya kelainan pada citra retina."
+        }
+
+        st.info(descriptions[predicted_label])
+
+        # Tambahkan animasi/gif sesuai hasil
+        gif_links = {
+            "Cataract 👁️": "https://media.giphy.com/media/l0MYC0LajbaPoEADu/giphy.gif",
+            "Diabetic Retinopathy 🩸": "https://media.giphy.com/media/26n6WywJyh39n1pBu/giphy.gif",
+            "Glaucoma 👓": "https://media.giphy.com/media/3o6nUQ0KI0n5g7sXBe/giphy.gif",
+            "Normal ✅": "https://media.giphy.com/media/111ebonMs90YLu/giphy.gif"
+        }
+
+        st.image(gif_links[predicted_label], caption="Animasi Terkait")
+
+else:
+    st.warning("📁 Silakan unggah gambar terlebih dahulu untuk memulai analisis.")
