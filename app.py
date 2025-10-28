@@ -97,3 +97,16 @@ if uploaded_file is not None:
 
 else:
     st.warning("📁 Silakan unggah gambar terlebih dahulu untuk memulai analisis.")
+
+page_bg = """
+<style>
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(to bottom, #a2d9ff, #ffffff);
+}
+[data-testid="stSidebar"] {
+    background: linear-gradient(to bottom, #1e88e5, #64b5f6);
+}
+</style>
+"""
+st.markdown(page_bg, unsafe_allow_html=True)
+
